@@ -49,13 +49,14 @@ def email_changes(
     html = _email_style + bindformat + header + table
     html = MIMEText(html, "html")
     msg_template = MIMEMultipart("alternative")
-    msg_template["Subject"] = subject.format(zone=zone)
     msg_template["From"] = fromaddr
+    msg_template["To"] = toaddr
+    msg_template["Subject"] = subject.format(zone=zone)
     msg_template['Date'] = utils.formatdate()
-
-    # Take the from address and extract the domain
-    domain = fromaddr.split('@')[1]
-    msg_template['Message-ID'] = utils.make_msgid(domain=domain)
+    msg_template['Message-ID'] = utils.make_msgid(domain=fromaddr.split('@')[1])
+    msg_template["MIME-Version"] = "1.0"
+    msg_template["Reply-To"] = fromaddr
+    msg_template["X-Mailer"] = "Python smtplib"
     email = msg_template
     email.attach(html)
 
