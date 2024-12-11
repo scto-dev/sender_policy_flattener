@@ -27,7 +27,7 @@ def flatten(
     for domain, spf_targets in input_records.items():
         records = spf2ips(spf_targets, domain, resolver)
         hashsum = sequence_hash(records)
-        current[domain] = {"sum": hashsum, "records": records}
+        current[domain] = {"records": records, "sum": hashsum}
         if lastresult.get(domain, False) and current.get(domain, False):
             previous_sum = lastresult[domain]["sum"]
             current_sum = current[domain]["sum"]

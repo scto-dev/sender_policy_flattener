@@ -32,7 +32,15 @@ _email_style = """
 
 
 def email_changes(
-    zone, prev_addrs, curr_addrs, subject, server, fromaddr, password, toaddr, test=False
+    zone,
+    prev_addrs,
+    curr_addrs,
+    subject,
+    server,
+    fromaddr,
+    password,
+    toaddr,
+    test=False,
 ):
     bindformat = format_records_for_email(curr_addrs)
     prev_addrs = " ".join(prev_addrs)
@@ -52,11 +60,18 @@ def email_changes(
     msg_template["From"] = fromaddr
     msg_template["To"] = toaddr
     msg_template["Subject"] = subject.format(zone=zone)
-    msg_template['Date'] = utils.formatdate()
-    msg_template['Message-ID'] = utils.make_msgid(domain=fromaddr.split('@')[1])
+    msg_template["Date"] = utils.formatdate()
     msg_template["MIME-Version"] = "1.0"
     msg_template["Reply-To"] = fromaddr
     msg_template["X-Mailer"] = "Python smtplib"
+
+    if "@" in fromaddr:
+        msg_template["Message-ID"] = utils.make_msgid(
+            domain=fromaddr.split("@")[1] or "example.com"
+        )
+    else:
+        print(f"Invalid from address: {fromaddr}")
+
     email = msg_template
     email.attach(html)
 
@@ -71,7 +86,7 @@ def email_changes(
 
         # Login if a password was provided
         if password:
-            print('\nPassword detected, attempting to login to smtp server\n')
+            print("\nPassword detected, attempting to login to smtp server\n")
             mailserver.login(fromaddr, password)
 
         mailserver.sendmail(fromaddr, toaddr, email.as_string())

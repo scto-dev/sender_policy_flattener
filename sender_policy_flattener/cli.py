@@ -3,6 +3,7 @@ A script that crawls and compacts SPF records into IP networks.
 This helps to avoid exceeding the DNS lookup limit of the Sender Policy Framework (SPF)
 https://tools.ietf.org/html/rfc7208#section-4.6.4
 """
+
 import json
 import argparse
 import sender_policy_flattener

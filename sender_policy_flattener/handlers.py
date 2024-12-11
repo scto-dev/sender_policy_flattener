@@ -8,61 +8,61 @@ def handle_ip(name, domain, ns):
 
 
 def handle_mx(name, domain, ns):
-    answers = ns.query(from_text(domain), "mx")
+    answers = ns.resolve(from_text(domain), "mx")
     for mailexchange in answers:
-        ips = ns.query(mailexchange.exchange, "a")
+        ips = ns.resolve(mailexchange.exchange, "a")
         for ip in ips:
             yield IPAddress(ip.address)
 
 
 def handle_mx_domain(name, domain, ns):
-    answers = ns.query(from_text(name), "mx")
+    answers = ns.resolve(from_text(name), "mx")
     for mailexchange in answers:
-        ips = ns.query(mailexchange, "a")
+        ips = ns.resolve(mailexchange, "a")
         for ip in ips:
             yield IPAddress(ip.address)
 
 
 def handle_mx_prefix(name, domain, ns):
     _name, prefix = name
-    answers = ns.query(from_text(domain), "mx")
+    answers = ns.resolve(from_text(domain), "mx")
     for mailexchange in answers:
-        ips = ns.query(mailexchange.exchange, "a")
+        ips = ns.resolve(mailexchange.exchange, "a")
         for ip in ips:
             yield IPNetwork("{0}/{1}".format(ip, prefix))
 
 
 def handle_mx_domain_prefix(name, domain, ns):
     _name, prefix = name
-    answers = ns.query(from_text(_name), "mx")
+    answers = ns.resolve(from_text(_name), "mx")
     for mailexchange in answers:
-        ips = ns.query(mailexchange, "a")
+        ips = ns.resolve(mailexchange, "a")
         for ip in ips:
             yield IPNetwork("{0}/{1}".format(ip, prefix))
 
 
 def handle_a(name, domain, ns):
-    answers = ns.query(from_text(domain), "a")
+    answers = ns.resolve(from_text(domain), "a")
     for ip in answers:
         yield IPAddress(ip.address)
 
 
 def handle_a_domain(name, domain, ns):
-    answers = ns.query(from_text(name), "a")
+    answers = ns.resolve(from_text(name), "a")
     for ip in answers:
         yield IPAddress(ip.address)
 
 
 def handle_a_prefix(name, domain, ns):
     _name, prefix = name
-    answers = ns.query(from_text(domain), "a")
+    answers = ns.resolve(from_text(domain), "a")
     for ip in answers:
         yield IPNetwork("{0}/{1}".format(ip, prefix))
 
 
 def handle_a_domain_prefix(name, domain, ns):
     _name, prefix = name
-    answers = ns.query(from_text(_name), "a")
+    answers = ns.resolve(from_text(_name), "a")
     for ip in answers:
         yield IPNetwork("{0}/{1}".format(ip, prefix))
 
