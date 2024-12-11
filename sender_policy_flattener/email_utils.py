@@ -51,7 +51,7 @@ def email_changes(
     msg_template = MIMEMultipart("alternative")
     msg_template["Subject"] = subject.format(zone=zone)
     msg_template["From"] = fromaddr
-    msg_template['Date'] = email.utils.utils.formatdate()
+    msg_template['Date'] = utils.formatdate()
 
     # Take the from address and extract the domain
     domain = fromaddr.split('@')[1]
@@ -65,13 +65,13 @@ def email_changes(
 
         # Verify the from address
         if not mailserver.verify(fromaddr):
-          print(f"Invalid from address: {fromaddr}")
-          return
+            print(f"Invalid from address: {fromaddr}")
+            return
 
         # Login if a password was provided
         if password:
-          print(f'\nPassword detected, attempting to login to smtp server\n')
-          mailserver.login(fromaddr, password)
+            print('\nPassword detected, attempting to login to smtp server\n')
+            mailserver.login(fromaddr, password)
 
         mailserver.sendmail(fromaddr, toaddr, email.as_string())
     except Exception as err:
