@@ -1,12 +1,12 @@
-sender policy flattener
-=======================
+# sender policy flattener
+
 We had a problem in our organisation that caused our SPF records to become invalid:
 
 When customers computers were querying our SPF records, there were more than 10 lookups required after following all of the ``include:`` remarks.
 
 Solution? Query them ourselves, and create a much more condense list of SPF records.
 
-#### But wait... What if the downstream records change?
+## But wait... What if the downstream records change?
 
 Part of what the script does is that it creates a JSON file that keeps track of the last list of IP Addresses that your combination of SPF records had.
 
@@ -14,10 +14,9 @@ When the hashsum of your IP Addresses changes, it will send out an email (or jus
 
 You could theoretically extract the flat IP records from the resulting JSON file and automatically update your DNS configuration with it.
 
-Installation
---------------------
+## Installation
 
-#### via git clone
+### Via git clone
 
 Clone this repo and run
 
@@ -26,21 +25,18 @@ pip install poetry
 poetry install
 ```
 
-
-#### via pip
+### Via pip
 
 ```shell
 pip install sender_policy_flattener
 ```
 
+## Usage
 
-Usage
-----------------
-
-```
+```shell
 usage: spflat [-h] [-c CONFIG] [-r RESOLVERS] [-e MAILSERVER] [-t TOADDR]
-              [-f FROMADDR] [-s SUBJECT] [-D SENDING_DOMAIN] [-d DOMAINS]
-              [-o OUTPUT]
+              [-f FROMADDR] [-p PASSWORD] [-s SUBJECT] [-D SENDING_DOMAIN]
+              [-d DOMAINS] [-o OUTPUT]
 
 A script that crawls and compacts SPF records into IP networks. This helps to
 avoid exceeding the DNS lookup limit of the Sender Policy Framework (SPF)
@@ -80,27 +76,26 @@ spflat --resolvers 8.8.8.8,8.8.4.4 \
     --domains gmail.com:txt,sendgrid.com:txt,yahoo.com:a \
     --sending-domain mydomain.com
 ```
+
 or
 
 ```shell
 spflat --config spf.json
 ```
+
 You can specify a config file, or you can specify all of the optional arguments from the command line.
 
 I've provided a ``settings.json`` file with an example configuration file.
 
+## Supported Python versions
 
-Supported Python versions
--------------------------
-See the latest result of the build: https://github.com/cetanu/sender_policy_flattener/actions
+See the latest result of the build: <https://github.com/cetanu/sender_policy_flattener/actions>
 
+## 3rd party dependencies
 
-3rd party dependencies
-----------------------
 * netaddr
 * dnspython
 
+## Example email format
 
-Example email format
---------------------
-<img src='https://raw.githubusercontent.com/cetanu/sender_policy_flattener/master/example/email_example.png' alt='example screenshot'></img>
+![example screenshot](https://raw.githubusercontent.com/cetanu/sender_policy_flattener/master/example/email_example.png)

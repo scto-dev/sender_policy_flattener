@@ -173,6 +173,7 @@ class SenderPolicyFlattenerTests(unittest.TestCase):
             email_server='mocked',
             email_subject='{zone} has changed',
             fromaddress='mocked',
+            password='mocked',
             toaddress='mocked',
         )
         expected_records = spf2ips({'test.com': 'txt'}, 'test.com')
@@ -197,6 +198,7 @@ class SenderPolicyFlattenerTests(unittest.TestCase):
             email_server='mocked',
             email_subject='{zone} has changed',
             fromaddress='mocked',
+            password='mocked',
             toaddress='mocked',
         )
         expected_records = spf2ips({'galactus.com': 'txt'}, 'test.com')
@@ -219,6 +221,7 @@ class SenderPolicyFlattenerTests(unittest.TestCase):
             subject='{zone} has changed',
             server='mocked',
             fromaddr='mocked',
+            password='mocked',
             toaddr='mocked',
             test=True,
         )

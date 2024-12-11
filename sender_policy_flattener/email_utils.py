@@ -31,7 +31,7 @@ _email_style = """
 
 
 def email_changes(
-    zone, prev_addrs, curr_addrs, subject, server, fromaddr, toaddr, test=False
+    zone, prev_addrs, curr_addrs, subject, server, fromaddr, password, toaddr, test=False
 ):
     bindformat = format_records_for_email(curr_addrs)
     prev_addrs = " ".join(prev_addrs)
@@ -56,6 +56,9 @@ def email_changes(
     try:
         mailserver = smtplib.SMTP()
         mailserver.connect(server)
+        # Login if a password was provided
+        if password:
+          mailserver.login(fromaddr, password)
         mailserver.sendmail(fromaddr, toaddr, email.as_string())
     except Exception as err:
         print("Email failed: " + str(err))

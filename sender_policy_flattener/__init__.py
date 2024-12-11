@@ -16,6 +16,7 @@ def flatten(
     email_subject,
     fromaddress,
     toaddress,
+    password,
     lastresult=None,
 ):
     resolver = Resolver()
@@ -38,6 +39,7 @@ def flatten(
                     subject=email_subject,
                     server=email_server,
                     fromaddr=fromaddress,
+                    password=password,
                     toaddr=toaddress,
                 )
     return current

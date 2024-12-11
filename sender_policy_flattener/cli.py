@@ -57,6 +57,15 @@ def parse_arguments():
     )
 
     parser.add_argument(
+        "-p",
+        "-pass",
+        dest="password",
+        help="Password for sending address",
+        default=None,
+        required=False,
+    )
+
+    parser.add_argument(
         "-s",
         "-subject",
         dest="subject",
@@ -104,6 +113,7 @@ def parse_arguments():
             arguments.resolvers = settings["resolvers"]
             arguments.toaddr = settings["email"]["to"]
             arguments.fromaddr = settings["email"]["from"]
+            arguments.password = settings["email"]["pass"]
             arguments.subject = settings["email"]["subject"]
             arguments.mailserver = settings["email"]["server"]
             arguments.domains = settings["sending domains"]
@@ -112,6 +122,7 @@ def parse_arguments():
         [
             arguments.toaddr,
             arguments.fromaddr,
+            arguments.password,
             arguments.subject,
             arguments.mailserver,
             arguments.domains,
