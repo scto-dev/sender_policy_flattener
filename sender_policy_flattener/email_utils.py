@@ -4,6 +4,7 @@ import smtplib
 from difflib import HtmlDiff
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import email.utils
 
 from sender_policy_flattener.formatting import format_records_for_email
 
@@ -50,11 +51,11 @@ def email_changes(
     msg_template = MIMEMultipart("alternative")
     msg_template["Subject"] = subject.format(zone=zone)
     msg_template["From"] = fromaddr
-    msg_template['Date'] = email.utils.formatdate()
+    msg_template['Date'] = utils.formatdate()
 
     # Take the from address and extract the domain
     domain = fromaddr.split('@')[1]
-    msg_template['Message-ID'] = email.utils.make_msgid(domain=domain)
+    msg_template['Message-ID'] = utils.make_msgid(domain=domain)
     email = msg_template
     email.attach(html)
 
