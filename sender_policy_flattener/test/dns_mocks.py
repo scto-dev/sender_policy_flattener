@@ -20,7 +20,7 @@ first_answer = " ".join(
         "ip4:10.0.0.0/24",
         "ip4:10.0.0.1/32",
         "exists:fake.test",
-        '-all"',
+        '~all"',
     ]
 )
 
@@ -32,7 +32,7 @@ lots_of_blocks = [
     for o4 in range(1, 5)
     for p in range(26, 31)
 ]
-large_answer = '"v=spf1 {0} -all"'.format(" ".join(lots_of_blocks))
+large_answer = '"v=spf1 {0} ~all"'.format(" ".join(lots_of_blocks))
 
 
 def make_rdata(s, rdt):
