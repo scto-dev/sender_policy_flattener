@@ -58,6 +58,7 @@ def email_changes(
         mailserver.connect(server)
         # Login if a password was provided
         if password:
+          print(f'\nPassword detected, attempting to login to smpt server\n')
           mailserver.login(fromaddr, password)
         mailserver.sendmail(fromaddr, toaddr, email.as_string())
     except Exception as err:

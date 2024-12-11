@@ -1,4 +1,4 @@
-# sender policy flattener
+# Sender Policy Flattener
 
 We had a problem in our organisation that caused our SPF records to become invalid:
 
