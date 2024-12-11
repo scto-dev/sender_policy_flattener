@@ -56,10 +56,17 @@ def email_changes(
     try:
         mailserver = smtplib.SMTP()
         mailserver.connect(server)
+
+        # Verify the from address
+        if not mailserver.verify(fromaddr):
+          print(f"Invalid from address: {fromaddr}")
+          return
+
         # Login if a password was provided
         if password:
-          print(f'\nPassword detected, attempting to login to smpt server\n')
+          print(f'\nPassword detected, attempting to login to smtp server\n')
           mailserver.login(fromaddr, password)
+
         mailserver.sendmail(fromaddr, toaddr, email.as_string())
     except Exception as err:
         print("Email failed: " + str(err))
