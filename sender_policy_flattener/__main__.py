@@ -76,6 +76,15 @@ def parse_arguments():
     )
 
     parser.add_argument(
+        "-u",
+        "-update_subject",
+        dest="update_subject",
+        help="Update subject string, must contain {zone}",
+        default=None,
+        required=False,
+    )
+
+    parser.add_argument(
         "-D",
         "--sending-domain",
         dest="sending_domain",
@@ -102,12 +111,41 @@ def parse_arguments():
         required=False,
     )
 
+    parser.add_argument(
+        "--update-records",
+        dest="update",
+        help="Update SPF records in CloudFlare",
+        action="store_true",
+        default=False,
+        required=False,
+    )
+
+    parser.add_argument(
+        "--force-update",
+        help="Force an update of SPF records in Cloudflare",
+        action="store_true",
+        dest="force_update",
+        default=False,
+        required=False,
+    )
+
+    parser.add_argument(
+        "--no-email",
+        help="don't send the email",
+        dest="sendemail",
+        default=True,
+        required=False,
+        action="store_false",
+    )
+
     arguments = parser.parse_args()
+
     if arguments.sending_domain:
         spf_includes = [x.split(":") for x in str(arguments.domains).split(",")]
         arguments.domains = {
             arguments.sending_domain: {d[0]: d[1] for d in spf_includes}
         }
+
     if arguments.config:
         with open(arguments.config) as config:
             settings = json.load(config)
@@ -116,24 +154,33 @@ def parse_arguments():
             arguments.fromaddr = settings["email"]["from"]
             arguments.password = settings["email"]["pass"]
             arguments.subject = settings["email"]["subject"]
+            arguments.update_subject = settings["email"]["update_subject"]
             arguments.mailserver = settings["email"]["server"]
             arguments.domains = settings["sending domains"]
             arguments.output = settings["output"]
-    required_non_config_args = all(
-        [
-            arguments.toaddr,
-            arguments.fromaddr,
-            arguments.password,
-            arguments.subject,
-            arguments.mailserver,
-            arguments.domains,
-        ]
-    )
+
+    if arguments.sendemail:
+        required_non_config_args = all(
+            [
+                arguments.toaddr,
+                arguments.fromaddr,
+                arguments.password,
+                arguments.subject,
+                arguments.update_subject,
+                arguments.mailserver,
+                arguments.domains,
+            ]
+        )
+    else:
+        required_non_config_args = all([arguments.domains])
+
     if not required_non_config_args:
         parser.print_help()
         exit()
+
     if "{zone}" not in arguments.subject:
         raise ValueError("Subject must contain {zone}")
+
     return arguments
 
 

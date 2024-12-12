@@ -1,6 +1,6 @@
 # coding=utf-8
 import unittest
-import mock
+from unittest.mock import patch
 from sender_policy_flattener import flatten
 from sender_policy_flattener.crawler import crawl, spf2ips, default_resolvers
 from sender_policy_flattener.email_utils import email_changes
@@ -53,7 +53,7 @@ def MockSmtplib(*args, **kwargs):
 
 
 class HandlerTests(unittest.TestCase):
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_ip(self, resolve):
         actual = [
             str(s) for s in handle_ip("172.16.0.1", "test.com", default_resolvers)
@@ -61,7 +61,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["172.16.0.1"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_mx(self, resolve):
         actual = [
             str(s) for s in handle_mx(("mx", "mx"), "test.com", default_resolvers)
@@ -69,7 +69,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["192.168.0.10"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_mx_prefix(self, resolve):
         actual = [
             str(s)
@@ -78,7 +78,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["192.168.0.10/29"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_mx_domain(self, resolve):
         actual = [
             str(s) for s in handle_mx_domain("test.fake", "test.com", default_resolvers)
@@ -86,7 +86,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["10.0.0.12", "10.0.0.13"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_mx_domain_prefix(self, resolve):
         actual = [
             str(s)
@@ -97,13 +97,13 @@ class HandlerTests(unittest.TestCase):
         expected = ["10.0.0.12/27", "10.0.0.13/27"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_a(self, resolve):
         actual = [str(s) for s in handle_a(("a", "a"), "test.com", default_resolvers)]
         expected = ["192.168.0.1"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_a_domain(self, resolve):
         actual = [
             str(s) for s in handle_a_domain("test.fake", "test.com", default_resolvers)
@@ -111,7 +111,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["10.0.0.10", "10.0.0.11"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_a_domain_prefix(self, resolve):
         actual = [
             str(s)
@@ -122,7 +122,7 @@ class HandlerTests(unittest.TestCase):
         expected = ["10.0.0.10/24", "10.0.0.11/24"]
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_a_prefix(self, resolve):
         actual = [
             str(s) for s in handle_a_prefix(["a", "26"], "test.com", default_resolvers)
@@ -190,19 +190,20 @@ class MechanismTests(unittest.TestCase):
 
 
 class SenderPolicyFlattenerTests(unittest.TestCase):
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
     def test_crawler_returns_all_expected_ips(self, resolve):
         actual = [str(s) for s in crawl("test.com", "txt", "test.com")]
         self.assertEqual(test_com_netblocks, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
-    @mock.patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
     def test_call_main_flatten_func(self, resolve, smtp):
         actual = flatten(
             input_records={"test.com": {"test.com": "txt", "mx.test.com": "a"}},
             dns_servers=["8.8.8.8"],
             email_server="mocked",
             email_subject="{zone} has changed",
+            update_subject="{zone} has been updated",
             fromaddress="mocked",
             password="mocked",
             toaddress="mocked",
@@ -211,14 +212,15 @@ class SenderPolicyFlattenerTests(unittest.TestCase):
         expected = {"test.com": {"records": expected_records, "sum": expected_hash}}
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
-    @mock.patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
     def test_call_main_flatten_func_on_large_spf_records(self, resolve, smtp):
         actual = flatten(
             input_records={"test.com": {"galactus.com": "txt"}},
             dns_servers=["8.8.8.8"],
             email_server="mocked",
             email_subject="{zone} has changed",
+            update_subject="{zone} has been updated",
             fromaddress="mocked",
             password="mocked",
             toaddress="mocked",
@@ -229,8 +231,8 @@ class SenderPolicyFlattenerTests(unittest.TestCase):
         }
         self.assertEqual(expected, actual)
 
-    @mock.patch(mocked_dns_object, side_effect=MockDNSQuery)
-    @mock.patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
+    @patch(mocked_dns_object, side_effect=MockDNSQuery)
+    @patch("sender_policy_flattener.email_utils.smtplib", side_effect=MockSmtplib)
     def test_bind_format(self, resolve, smtp):
         expected_records = spf2ips({"test.com": "txt"}, "test.com")
         actual = email_changes(
