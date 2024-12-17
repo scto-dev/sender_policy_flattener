@@ -137,3 +137,6 @@ ENV/
 
 sums.json
 result.html
+
+spfs.json
+spf_sums.json

@@ -10,6 +10,7 @@ from sender_policy_flattener.formatting import (
 )
 from sender_policy_flattener.mechanisms import tokenize
 from sender_policy_flattener.handlers import handler_mapping
+from netaddr import IPAddress
 
 default_resolvers = resolver.Resolver()
 
@@ -26,11 +27,22 @@ def spf2ips(records, domain, resolvers=default_resolvers):
 
 def crawl(rrname, rrtype, domain, ns=default_resolvers):
     try:
-        answers = ns.query(from_text(rrname), rrtype)
+        answers = ns.resolve(from_text(rrname), rrtype)
     except Exception as err:
         print(repr(err), rrname, rrtype)
     else:
         answer = " ".join([str(a) for a in answers])
+
+        # Special handling for a records
+        if (rrtype == "a") and not list(tokenize(answer)):
+            try:
+                ip = IPAddress(answer)
+                yield ip
+            except ValueError as e:
+                print(f"A record is not a valid ip address {answer}")
+                print(e)
+                return
+
         for pair in tokenize(answer):
             rname, rtype = pair
             if rtype is None:

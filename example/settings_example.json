@@ -18,6 +18,7 @@
     "email": {
         "to": "your@email.com",
         "from": "your@email.com",
+        "pass": "your_password",
         "subject": "[Change Detected] SPF Records for {zone} have changed.",
         "server": "email_server"
     },

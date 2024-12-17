@@ -1,0 +1,11 @@
+services:
+  spflat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app/
+    command: python cli.py 
+    working_dir: /app
+    env_file:
+      - .env
